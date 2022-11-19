@@ -2,6 +2,7 @@ package ru.gb.veber.lesson1mvplite
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
@@ -9,7 +10,7 @@ import org.koin.core.qualifier.named
 
 class MainActivity : AppCompatActivity() {
 
-    private val repo: Repo by inject()
+    private val repo: Repo  = get()
     private val cache: Cacheable by inject()
     private val injectClass: InjectClass by inject()
 

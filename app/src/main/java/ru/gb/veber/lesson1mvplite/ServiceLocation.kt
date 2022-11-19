@@ -2,6 +2,7 @@ package ru.gb.veber.lesson1mvplite
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.getScopeId
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -35,7 +36,6 @@ object ServiceLocation {
         factory<Repository>(named("Factory")) {
             RepoImplRetrofit(someDep = get())
         }
-
         single { (data: String) ->
             SomeDepWithConstructor(data, context = get())
         }

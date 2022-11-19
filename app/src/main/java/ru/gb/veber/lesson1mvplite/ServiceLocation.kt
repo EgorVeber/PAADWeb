@@ -1,12 +1,10 @@
 package ru.gb.veber.lesson1mvplite
 
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import java.util.*
 
 object ServiceLocation {
     val mainModule = module {
@@ -39,7 +37,7 @@ object ServiceLocation {
         }
 
         single { (data: String) ->
-            SomeDepWithConstructor(data)
+            SomeDepWithConstructor(data, context = get())
         }
     }
 }

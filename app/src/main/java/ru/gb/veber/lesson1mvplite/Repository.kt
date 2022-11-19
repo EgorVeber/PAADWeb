@@ -32,7 +32,7 @@ class GetContext(private val context: Context) {
 }
 
 
-class SomeDepWithConstructor(private val string: String) {
+class SomeDepWithConstructor(private val string: String,private val context: Context) {
     fun printSelf() {
         println("VVV $string")
     }

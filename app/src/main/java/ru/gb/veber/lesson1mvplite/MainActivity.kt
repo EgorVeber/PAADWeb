@@ -12,76 +12,15 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        printLog(throwable)
-    }
-    private val coroutineScope =
-        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler + SupervisorJob())
-
-
-    private var job: Job? = null
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        val someCallbackClass = SomeCallbackClass()
-        val flow = callBackFlow(someCallbackClass)
-
-        job = coroutineScope.launch {
-            flow.collect {
-                printLog(it)
-            }
-        }
-
-        flow.onEach { printLog(it) }.launchIn(coroutineScope)
-
-
-        binding.buttonStart.setOnClickListener {
-            someCallbackClass.invoke()
-        }
-
-        binding.buttonStop.setOnClickListener {
-            //job?.cancel()
-        }
+        getFlow()
     }
 
-    companion object {
-        const val LOG_COROUTINE_TAG = "LOG_COROUTINE_TAG"
-    }
+    private fun getFlow() {
 
-    private fun printLog(message: Any) {
-        Log.d(LOG_COROUTINE_TAG, message.toString())
-    }
-
-    private fun callBackFlow(someCallbackClass: SomeCallbackClass) = callbackFlow {
-        var numder = 1000
-        var listener = SomeCallbackClass.Listener {
-            trySend(++numder)
-        }
-        someCallbackClass.addListener(listener)
-        awaitClose { someCallbackClass.remove(listener) }
-    }
-}
-
-class SomeCallbackClass() {
-    fun interface Listener {
-        fun onChange()
-    }
-
-    val listeners = CopyOnWriteArrayList<Listener>()
-
-    fun addListener(listener: Listener) {
-        listeners.add(listener)
-    }
-
-    fun remove(listener: Listener) = listeners.remove(listener)
-
-    fun invoke() {
-        listeners.forEach { it.onChange() }
     }
 }

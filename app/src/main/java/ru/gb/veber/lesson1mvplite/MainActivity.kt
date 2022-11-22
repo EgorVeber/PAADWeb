@@ -1,15 +1,11 @@
 package ru.gb.veber.lesson1mvplite
 
-import android.location.GnssAntennaInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
 import ru.gb.veber.lesson1mvplite.databinding.ActivityMainBinding
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -32,28 +28,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var flow = flow {
-            repeat(10) {
-                delay(400)
-                emit(it)
+
+        val someCallbackClass = SomeCallbackClass()
+        val flow = callBackFlow(someCallbackClass)
+
+        job = coroutineScope.launch {
+            flow.collect {
+                printLog(it)
             }
         }
 
-        var flowList = flowOf(listOf(1, 2, 3, 4), listOf(1, 2, 3, 4))
+        flow.onEach { printLog(it) }.launchIn(coroutineScope)
 
-        var flowListExtension = listOf(1, 2, 3, 4).asFlow()
 
         binding.buttonStart.setOnClickListener {
-            job?.cancel()
-            job = coroutineScope.launch {
-                flowList.collect {
-                    printLog(it)
-                }
-            }
+            someCallbackClass.invoke()
         }
 
         binding.buttonStop.setOnClickListener {
-            job?.cancel()
+            //job?.cancel()
         }
     }
 
@@ -68,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     private fun callBackFlow(someCallbackClass: SomeCallbackClass) = callbackFlow {
         var numder = 1000
         var listener = SomeCallbackClass.Listener {
-            trySend(numder++)
+            trySend(++numder)
         }
         someCallbackClass.addListener(listener)
         awaitClose { someCallbackClass.remove(listener) }

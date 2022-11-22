@@ -17,34 +17,29 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler + SupervisorJob())
 
 
+    private var job: Job? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
+        val flag = true
         binding.buttonStart.setOnClickListener {
-            coroutineScope.launch {
-                launch {
-                    delay(3000)
-                    10 / 0
-                }
-                while (true) {
-                    delay(1000)
-                    printLog("tick1")
-                }
-            }
-
-            coroutineScope.launch {
-                while (true) {
-                    delay(1000)
-                    printLog("tick2")
+            job?.cancel()
+            job = coroutineScope.launch {
+                while (isActive) {
+                    delay(400)
+                    printLog(isActive)
+                    printLog(job?.isCancelled.toString())
                 }
             }
         }
 
         binding.buttonStop.setOnClickListener {
-
+            if (flag) job?.cancel() else job?.start()
         }
     }
 

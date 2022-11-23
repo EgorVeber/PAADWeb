@@ -10,8 +10,9 @@ import kotlinx.coroutines.launch
 internal class MainViewModel(
     repository: Repository = Repository(),
 ) : ViewModel() {
-    val liveData: MutableLiveData<Data> = MutableLiveData()
-   //val liveData: LiveData<Data> = repository.userData.asLiveData()
+    private val liveData: MutableLiveData<Data> = MutableLiveData()
+    val mLiveData: LiveData<Data> = liveData
+    //val liveData: LiveData<Data> = repository.userData.asLiveData()
 
 
     init {

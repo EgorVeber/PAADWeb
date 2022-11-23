@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val coroutineModel: MainViewModel by lazy {
-        ViewModelProvider(this,ViewModelFactory())[MainViewModel::class.java]
+        ViewModelProvider(this, ViewModelFactory())[MainViewModel::class.java]
     }
 
 
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
 //        setupFlows()
 //        zipFlows()
-        coroutineModel.liveData.observe(this) {
+        coroutineModel.mLiveData.observe(this) {
             binding.message.text = it.data
         }
     }

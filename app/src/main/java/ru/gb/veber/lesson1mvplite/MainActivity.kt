@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
@@ -15,9 +16,25 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private val coroutineModel: MainViewModel by lazy {
-        ViewModelProvider(this, ViewModelFactory())[MainViewModel::class.java]
+    private val timestampProvider = object : TimestampProvider {
+        override fun getMilliseconds(): Long {
+            return System.currentTimeMillis()
+        }
     }
+
+    private val stopwatchListOrchestrator = StopwatchListOrchestrator(
+        StopwatchStateHolder(
+            StopwatchStateCalculator(
+                timestampProvider,
+                ElapsedTimeCalculator(timestampProvider)),
+            ElapsedTimeCalculator(timestampProvider),
+            TimestampMillisecondsFormatter()
+        ),
+        CoroutineScope(
+            Dispatchers.Main
+                    + SupervisorJob()
+        )
+    )
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,52 +42,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        getFlow()
-//        startFlow()
-
-
-//        setupFlows()
-//        zipFlows()
-        coroutineModel.mLiveData.observe(this) {
-            binding.message.text = it.data
-        }
-    }
-
-    private fun getFlow() = flow {
-        logD("Start Flow")
-        (0..10).forEach {
-            delay(500)
-            logD("Emmitting $it")
-            emit(it)
-        }
-    }.flowOn(Dispatchers.Default)
-
-    private fun startFlow() {
-        CoroutineScope(Dispatchers.Main).launch {
-            getFlow().collect {
-                logD(it)
+        CoroutineScope(Dispatchers.Main + SupervisorJob()).launch {
+            stopwatchListOrchestrator.ticker.collect {
+                binding.textTime.text = it
             }
         }
-    }
 
+        binding.buttonStart.setOnClickListener {
+            stopwatchListOrchestrator.start()
+        }
 
-    lateinit var flowOne: Flow<String>
-    lateinit var flowTwo: Flow<String>
+        binding.buttonPause.setOnClickListener {
+            stopwatchListOrchestrator.pause()
+        }
 
-
-    private fun setupFlows() {
-        flowOne = flowOf("Юрий", "Александр", "Иван").flowOn(Dispatchers.Default)
-        flowTwo = flowOf("Гагарин", "Пушкин", "Грозный").flowOn(Dispatchers.Default)
-    }
-
-    private fun zipFlows() {
-        CoroutineScope(Dispatchers.Main).launch {
-            flowOne.zip(flowTwo)
-            { firstString, secondString ->
-                "$firstString $secondString"
-            }.collect {
-                logD(it)
-            }
+        binding.buttonStop.setOnClickListener {
+            stopwatchListOrchestrator.stop()
         }
     }
 

@@ -1,5 +1,8 @@
 package ru.gb.veber.lesson1mvplite.utils
 
+import android.util.Log
+import ru.gb.veber.lesson1mvplite.view.MainActivity
+
 class TimestampMillisecondsFormatter() {
 
     fun format(timestamp: Long): String {
@@ -23,4 +26,8 @@ class TimestampMillisecondsFormatter() {
     companion object {
         const val DEFAULT_TIME = "00:00:000"
     }
+}
+
+fun logD(message: Any) {
+    Log.d(MainActivity.LOG_COROUTINE_TAG, message.toString())
 }

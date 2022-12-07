@@ -1,4 +1,4 @@
-package ru.gb.veber.lesson1mvplite
+package ru.gb.veber.lesson1mvplite.utils
 
 class TimestampMillisecondsFormatter() {
 

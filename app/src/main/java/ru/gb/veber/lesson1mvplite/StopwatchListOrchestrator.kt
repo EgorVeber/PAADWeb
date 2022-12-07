@@ -3,6 +3,7 @@ package ru.gb.veber.lesson1mvplite
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.gb.veber.lesson1mvplite.model.StopwatchStateHolder
 
 class StopwatchListOrchestrator(
     private val stopwatchStateHolder: StopwatchStateHolder,

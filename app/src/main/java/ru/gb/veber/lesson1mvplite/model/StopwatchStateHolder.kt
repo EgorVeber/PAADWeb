@@ -1,4 +1,7 @@
-package ru.gb.veber.lesson1mvplite
+package ru.gb.veber.lesson1mvplite.model
+import ru.gb.veber.lesson1mvplite.model.statestopwatch.ElapsedTimeCalculator
+import ru.gb.veber.lesson1mvplite.model.statestopwatch.StopwatchStateCalculator
+import ru.gb.veber.lesson1mvplite.utils.TimestampMillisecondsFormatter
 
 class StopwatchStateHolder(
     private val stopwatchStateCalculator: StopwatchStateCalculator,
